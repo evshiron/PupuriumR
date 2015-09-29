@@ -1,0 +1,12 @@
+[package]
+
+name = "pupurium_r"
+version = "0.0.1"
+authors = [ "evshiron", "Diberium" ]
+links = "CQP"
+build = "build.rs"
+
+[lib]
+
+name = "pupurium_r"
+crate-type = [ "dylib" ]

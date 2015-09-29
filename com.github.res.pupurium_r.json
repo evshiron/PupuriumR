@@ -1,0 +1,23 @@
+{
+	"ret": 1,
+	"appid": "com.github.res.pupurium_r",
+	"name": "PupuriumR",
+	"apiver": 9,
+	"version": "0.0.1",
+	"version_id": 1,
+	"author": "evshiron, Diberium",
+	"description": "The daughter of Diberium",
+	"event": [
+		{
+			"id": 1,
+			"type": 21,
+			"name": "PrivateMessageHandler",
+			"function": "PrivateMessageHandler",
+			"priority": 30000
+		}
+	],
+    "auth": [
+		100
+    ]
+
+}
