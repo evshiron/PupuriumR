@@ -6,10 +6,15 @@ authors = [ "evshiron", "Diberium" ]
 links = "CQP"
 build = "build.rs"
 
+[dependencies]
+winapi = "*"
+user32-sys = "*"
+
 [dependencies.cqpsdk]
-git = "https://github.com/doylecnn/cqpsdk-rust"
+git = "https://github.com/evshiron/cqpsdk-rust"
 
 [lib]
 
 name = "pupurium_r"
 crate-type = [ "dylib" ]
+

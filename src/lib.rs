@@ -1,4 +1,10 @@
+
+extern crate winapi;
+extern crate user32;
+
 extern crate cqpsdk;
+
+use std::ffi::CString;
 use cqpsdk::cqpapi;
 
 static mut AUTH_CODE: i32 = 0;
@@ -17,7 +23,14 @@ pub extern "stdcall" fn initialize(AuthCode: i32) -> i32 {
 	
 	//println!("Initialize.");
 
+	let msg = match CString::new("Greeting from PupuriumR") {
+		Ok(s) => s,
+		Err(e) => return 1,
+	};
+
 	unsafe {
+
+		user32::MessageBoxA(std::ptr::null_mut(), msg.as_ptr(), msg.as_ptr(), 0);
 
 		AUTH_CODE = AuthCode;
 
