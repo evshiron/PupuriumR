@@ -6,6 +6,9 @@ authors = [ "evshiron", "Diberium" ]
 links = "CQP"
 build = "build.rs"
 
+[dependencies.cqpsdk]
+git = "https://github.com/doylecnn/cqpsdk-rust"
+
 [lib]
 
 name = "pupurium_r"
