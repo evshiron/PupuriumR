@@ -14,10 +14,18 @@
 			"name": "PrivateMessageHandler",
 			"function": "PrivateMessageHandler",
 			"priority": 30000
+		},
+		{
+			"id": 2,
+			"type": 2,
+			"name": "GroupMessageHandler",
+			"function": "GroupMessageHandler",
+			"priority": 20000
 		}
 	],
-    "auth": [
-		106
+	"auth": [
+		101,
+		106,
     ]
 
 }

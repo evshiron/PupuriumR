@@ -9,6 +9,7 @@ build = "build.rs"
 [dependencies]
 winapi = "*"
 user32-sys = "*"
+encoding = "*"
 
 [dependencies.cqpsdk]
 git = "https://github.com/evshiron/cqpsdk-rust"
