@@ -30,7 +30,7 @@ static mut AUTH_CODE: i32 = 0;
 // https://github.com/rust-lang/rust/issues/17806
 
 #[export_name="\x01_AppInfo"]
-pub extern "stdcall" fn app_info() -> *const u8 {
+pub extern "stdcall" fn app_info() -> *const i8 {
 	
 	return "9,com.github.res.pupurium_r".as_ptr();
 
@@ -58,24 +58,17 @@ pub extern "stdcall" fn private_message_handler(subType: i32, sendTime: i32, qqN
 	
 	unsafe {
 
-		//let msg = utf8!(msg);
+		let msg = utf8!(msg);
 
-		// Crash at 0x0.
-		//cqpapi::CQ_addLog(AUTH_CODE, cqpapi::CQLOG_INFO, gbk!(msg), gbk!(msg));
+		cqpapi::CQ_addLog(AUTH_CODE, cqpapi::CQLOG_INFO, gbk!(msg), gbk!(msg));
 
-		// Crash at 0x0.
-		//cqpapi::CQ_addLog(AUTH_CODE, cqpapi::CQLOG_INFO, gbk!("中文测试！"), gbk!("中文测试！"));
+		cqpapi::CQ_sendPrivateMsg(AUTH_CODE, qqNumber, gbk!(&format!("你刚才说：{}", msg)[..]));
 
-		let msg = gbk!("中文测试！");
-		cqpapi::CQ_addLog(AUTH_CODE, cqpapi::CQLOG_INFO, msg, msg);
-
-		//match msg {
-		match "Alice?" {
+		match msg {
 
 			"Alive?" => {
 
-				// Crash at 0x0.
-				//cqpapi::CQ_sendPrivateMsg(AUTH_CODE, qqNumber, gbk!("Alive."));
+				cqpapi::CQ_sendPrivateMsg(AUTH_CODE, qqNumber, gbk!("Alive."));
 
 			},
 			_ => {
