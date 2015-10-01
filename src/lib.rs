@@ -1,26 +1,31 @@
+#![feature(const_fn)]
+#![feature(libc)]
 
-extern crate winapi;
+use std::ffi::{CStr,CString};
+
+extern crate libc;
+use self::libc::{c_char};
 extern crate user32;
 
+extern crate encoding;
+use encoding::{Encoding, DecoderTrap};
+use encoding::all::GB18030;
+
 extern crate cqpsdk;
+use cqpsdk::{CqpApi,LogLevel};
 
-use std::ffi::CString;
-use cqpsdk::cqpapi;
-
-static mut AUTH_CODE: i32 = 0;
+// static mut cqpapi :CqpApi=cqpsdk::empty_stuct();
+static mut cqpapi :CqpApi=CqpApi::static_new();
 
 // https://github.com/rust-lang/rust/issues/17806
 
 #[export_name="\x01_AppInfo"]
-pub extern "stdcall" fn app_info() -> *const u8 {
-	
-	return "9,com.github.res.pupurium_r".as_ptr();
-
+pub extern "stdcall" fn app_info() -> *const c_char {
+	CString::new("9,com.github.res.pupurium_r").unwrap().as_ptr()
 }
 
 #[export_name="\x01_Initialize"]
-pub extern "stdcall" fn initialize(AuthCode: i32) -> i32 {
-	
+pub extern "stdcall" fn initialize(auth_code: i32) -> i32 {
 	//println!("Initialize.");
 
 	let msg = match CString::new("Greeting from PupuriumR") {
@@ -29,26 +34,19 @@ pub extern "stdcall" fn initialize(AuthCode: i32) -> i32 {
 	};
 
 	unsafe {
-
 		user32::MessageBoxA(std::ptr::null_mut(), msg.as_ptr(), msg.as_ptr(), 0);
-
-		AUTH_CODE = AuthCode;
-
+                cqpapi = CqpApi::new(auth_code);
 	}
-
-	return 0;
-
+    0
 }
 
 #[export_name="\x01_PrivateMessageHandler"]
-pub extern "stdcall" fn private_message_handler(subType: i32, sendTime: i32, QQID: i64, msg: *const u8, font: i32) -> i32 {
-	
-	unsafe {
-
-		cqpapi::CQ_sendPrivateMsg(AUTH_CODE, QQID, "Reply!".as_ptr());
-
-	}
-
-	return 0;
-
+pub extern "stdcall" fn private_message_handler(sub_type: i32, send_time: i32, qq_number: i64, msg: *const c_char, font: i32) -> i32 {
+        unsafe {
+                let msg = CStr::from_ptr(msg).to_bytes();
+                let msgText = GB18030.decode(msg, DecoderTrap::Ignore).unwrap();
+                cqpapi.send_private_message(qq_number, &format!("收到消息:{}", msgText));
+                //cqpapi.add_log(LogLevel::Info, "demo", "test");
+        }
+        0
 }

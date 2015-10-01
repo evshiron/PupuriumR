@@ -1,5 +1,4 @@
 [package]
-
 name = "pupurium_r"
 version = "0.0.1"
 authors = [ "evshiron", "Diberium" ]
@@ -9,12 +8,12 @@ build = "build.rs"
 [dependencies]
 winapi = "*"
 user32-sys = "*"
+encoding = "=0.2.32"
 
 [dependencies.cqpsdk]
-git = "https://github.com/evshiron/cqpsdk-rust"
+git = "https://github.com/doylecnn/cqpsdk-rust"
 
 [lib]
-
 name = "pupurium_r"
 crate-type = [ "dylib" ]
 
