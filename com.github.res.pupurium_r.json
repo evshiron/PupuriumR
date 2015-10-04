@@ -21,11 +21,26 @@
 			"name": "GroupMessageHandler",
 			"function": "GroupMessageHandler",
 			"priority": 20000
+		},
+		{
+			"id":6,
+			"type":102,
+			"name":"GroupMemberLeaveHandler",
+			"function":"GroupMemberLeaveHandler",
+			"priority":30000
+		},
+		{
+			"id":7,
+			"type":103,
+			"name":"GroupMemberJoinHandler",
+			"function":"GroupMemberJoinHandler",
+			"priority":30000
 		}
+
 	],
 	"auth": [
 		101,
 		106,
-    ]
+	]
 
 }

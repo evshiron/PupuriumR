@@ -27,12 +27,31 @@ macro_rules! utf8 {
 
 static mut AUTH_CODE: i32 = 0;
 
+fn welcomeResistance(groupNumber: i64, qqNumber: i64) {
+	
+	unsafe {
+
+		cqpapi::CQ_sendGroupMsg(AUTH_CODE, groupNumber, gbk!(&format!(r#"欢迎新人 {}！
+建议玩家使用英文界面方便交流（不要吐槽英文界面哪里方便交流...）
+右上角 目录 -> 设备 -> 语言 -> English 即可
+请务必完成新手四项任务：
+  1.修改群名片（群名片格式：游戏等级-游戏id-活动区域）
+  2.上传带 游戏ID 的游戏内截图（上传到群内新人报道相册）
+  3.完成游戏自带 Training （游戏主界面右上角 OPS -> Training 下的项目）
+  4.阅读 ingress 新手指南: http://pan.baidu.com/s/1pJ4yUuB
+  5.汉子请爆照, 妹子请爆两张！
+如果对这个游戏有任何疑问，ASK。"#, qqNumber.to_string())[..]));
+
+	}
+
+}
+
 // https://github.com/rust-lang/rust/issues/17806
 
 #[export_name="\x01_AppInfo"]
 pub extern "stdcall" fn app_info() -> *const i8 {
 	
-	return "9,com.github.res.pupurium_r".as_ptr();
+	return gbk!("9,com.github.res.pupurium_r");
 
 }
 
@@ -60,9 +79,7 @@ pub extern "stdcall" fn private_message_handler(subType: i32, sendTime: i32, qqN
 
 		let msg = utf8!(msg);
 
-		cqpapi::CQ_addLog(AUTH_CODE, cqpapi::CQLOG_INFO, gbk!(msg), gbk!(msg));
-
-		cqpapi::CQ_sendPrivateMsg(AUTH_CODE, qqNumber, gbk!(&format!("你刚才说：{}", msg)[..]));
+		//cqpapi::CQ_addLog(AUTH_CODE, cqpapi::CQLOG_INFO, gbk!(msg), gbk!(msg));
 
 		match msg {
 
@@ -71,7 +88,14 @@ pub extern "stdcall" fn private_message_handler(subType: i32, sendTime: i32, qqN
 				cqpapi::CQ_sendPrivateMsg(AUTH_CODE, qqNumber, gbk!("Alive."));
 
 			},
+			"welcomeResistanceWuhan" => {
+
+				welcomeResistance(147798016, qqNumber);
+
+			},
 			_ => {
+
+				cqpapi::CQ_sendPrivateMsg(AUTH_CODE, qqNumber, gbk!(&format!("你刚才说：{}", msg)[..]));
 
 				return cqpapi::EVENT_IGNORE;
 
@@ -88,6 +112,40 @@ pub extern "stdcall" fn private_message_handler(subType: i32, sendTime: i32, qqN
 #[export_name="\x01_GroupMessageHandler"]
 pub extern "stdcall" fn group_message_handler(subType: i32, sendTime: i32, groupNumber: i64, qqNumber: i64, anonymousName: *const i8, msg: *const i8, font: i32) -> i32 {
 	
+	return cqpapi::EVENT_IGNORE;
+
+}
+
+#[export_name="\x01_GroupMemberLeaveHandler"]
+pub extern "stdcall" fn group_member_leave_handler(subType: i32, sendTime: i32, groupNumber: i64, opQQNumber: i64, qqNumber: i64) -> i32 {
+
+	unsafe {
+
+		if(groupNumber == 147798016) {
+
+			cqpapi::CQ_sendGroupMsg(AUTH_CODE, groupNumber, gbk!(&format!("又有人因为忍受不了这群的污退群了……快来个人去关爱一下他，Q号是{}（", qqNumber.to_string())[..]));
+
+		}
+
+	}
+
+	return cqpapi::EVENT_IGNORE;
+
+}
+
+#[export_name="\x01_GroupMemberJoinHandler"]
+pub extern "stdcall" fn group_member_join_handler(subType: i32, sendTime: i32, groupNumber: i64, opQQNumber: i64, qqNumber: i64) -> i32 {
+	
+	unsafe {
+
+		if(groupNumber == 147798016) {
+
+			welcomeResistance(groupNumber, qqNumber);
+
+		}
+
+	}
+
 	return cqpapi::EVENT_IGNORE;
 
 }
