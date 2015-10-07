@@ -31,7 +31,7 @@ fn welcomeResistance(groupNumber: i64, qqNumber: i64) {
 	
 	unsafe {
 
-		cqpapi::CQ_sendGroupMsg(AUTH_CODE, groupNumber, gbk!(&format!(r#"欢迎新人 {}！
+		cqpapi::CQ_sendGroupMsg(AUTH_CODE, groupNumber, gbk!(&format!(r#"欢迎新人 [CQ:at,qq={}]！
 建议玩家使用英文界面方便交流（不要吐槽英文界面哪里方便交流...）
 右上角 目录 -> 设备 -> 语言 -> English 即可
 请务必完成新手四项任务：
