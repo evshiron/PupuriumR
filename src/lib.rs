@@ -32,7 +32,7 @@ static mut AUTH_CODE: i32 = 0;
 #[export_name="\x01_AppInfo"]
 pub extern "stdcall" fn app_info() -> *const i8 {
 	
-	return "9,com.github.res.pupurium_r".as_ptr();
+	return gbk!("9,com.github.res.pupurium_r");
 
 }
 
