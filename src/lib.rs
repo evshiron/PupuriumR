@@ -3,6 +3,7 @@ extern crate winapi;
 extern crate user32;
 extern crate encoding;
 
+#[macro_use]
 extern crate cqpsdk;
 
 use std::ffi::CString;
@@ -13,25 +14,25 @@ use encoding::all::{UTF_8, GBK};
 
 use cqpsdk::cqpapi;
 
-macro_rules! gbk {
+struct Pupurium {
 
-	( $x: expr ) => (CString::new(GBK.encode($x, EncoderTrap::Ignore).unwrap()).unwrap().as_ptr());
-	
+	IsInitialized: bool,
+	AuthCode: i32
+
 }
 
-macro_rules! utf8 {
-	
-	( $x: expr ) => (&GBK.decode(CStr::from_ptr($x).to_bytes(), DecoderTrap::Ignore).unwrap()[..]);
-	
-}
+static mut Pupurium: Pupurium = Pupurium {
 
-static mut AUTH_CODE: i32 = 0;
+	IsInitialized: false,
+	AuthCode: 0
+
+};
 
 fn welcomeResistance(groupNumber: i64, qqNumber: i64) {
 	
 	unsafe {
 
-		cqpapi::CQ_sendGroupMsg(AUTH_CODE, groupNumber, gbk!(&format!(r#"欢迎新人 [CQ:at,qq={}]！
+		cqpapi::CQ_sendGroupMsg(Pupurium.AuthCode, groupNumber, gbk!(&format!(r#"欢迎新人 [CQ:at,qq={}]！
 建议玩家使用英文界面方便交流（不要吐槽英文界面哪里方便交流...）
 右上角 目录 -> 设备 -> 语言 -> English 即可
 请务必完成新手四项任务：
@@ -62,9 +63,11 @@ pub extern "stdcall" fn initialize(AuthCode: i32) -> i32 {
 
 	unsafe {
 
-		user32::MessageBoxA(std::ptr::null_mut(), gbk!("PupuriumR初始化完毕。"), gbk!("PupuriumR初始化完毕。"), 0);
+		//user32::MessageBoxA(std::ptr::null_mut(), gbk!("PupuriumR初始化完毕。"), gbk!("PupuriumR初始化完毕。"), 0);
 
-		AUTH_CODE = AuthCode;
+		Pupurium.AuthCode = AuthCode;
+
+		Pupurium.IsInitialized = true;
 
 	}
 
@@ -79,23 +82,59 @@ pub extern "stdcall" fn private_message_handler(subType: i32, sendTime: i32, qqN
 
 		let msg = utf8!(msg);
 
-		//cqpapi::CQ_addLog(AUTH_CODE, cqpapi::CQLOG_INFO, gbk!(msg), gbk!(msg));
+		//cqpapi::CQ_addLog(Pupurium.AuthCode, cqpapi::CQLOG_INFO, gbk!(msg), gbk!(msg));
 
 		match msg {
 
 			"Alive?" => {
 
-				cqpapi::CQ_sendPrivateMsg(AUTH_CODE, qqNumber, gbk!("Alive."));
+				cqpapi::CQ_sendPrivateMsg(Pupurium.AuthCode, qqNumber, gbk!("Alive."));
 
 			},
-			"welcomeResistanceWuhan" => {
+			_ if(msg.starts_with("WelcomeResistance")) => {
 
-				welcomeResistance(147798016, qqNumber);
+				let arguments: Vec<&str> = msg.split_whitespace().collect();
+
+				if(arguments.len() < 3) {
+
+					cqpapi::CQ_sendPrivateMsg(Pupurium.AuthCode, qqNumber, gbk!("INVALID_ARGUMENT"));
+
+					return cqpapi::EVENT_IGNORE;
+
+				}
+
+				match arguments[1] {
+
+					"Wuhan" => {
+
+						match arguments[2].parse::<i64>() {
+
+							Ok(v) => welcomeResistance(147798016, v),
+							Err(e) => {
+
+								cqpapi::CQ_sendPrivateMsg(Pupurium.AuthCode, qqNumber, gbk!("INVALID_ARGUMENT"));
+
+								return cqpapi::EVENT_IGNORE
+
+							}
+
+						}
+
+					},
+					_ => {
+
+						cqpapi::CQ_sendPrivateMsg(Pupurium.AuthCode, qqNumber, gbk!("INVALID_ARGUMENT"));
+
+						return cqpapi::EVENT_IGNORE;
+
+					}
+
+				}
 
 			},
 			_ => {
 
-				cqpapi::CQ_sendPrivateMsg(AUTH_CODE, qqNumber, gbk!(&format!("你刚才说：{}", msg)[..]));
+				cqpapi::CQ_sendPrivateMsg(Pupurium.AuthCode, qqNumber, gbk!(&format!("你刚才说：{}", msg)[..]));
 
 				return cqpapi::EVENT_IGNORE;
 
@@ -123,7 +162,7 @@ pub extern "stdcall" fn group_member_leave_handler(subType: i32, sendTime: i32, 
 
 		if(groupNumber == 147798016) {
 
-			cqpapi::CQ_sendGroupMsg(AUTH_CODE, groupNumber, gbk!(&format!("又有人因为忍受不了这群的污退群了……快来个人去关爱一下他，Q号是{}（", qqNumber.to_string())[..]));
+			cqpapi::CQ_sendGroupMsg(Pupurium.AuthCode, groupNumber, gbk!(&format!("又有人因为忍受不了这群的污退群了……快来个人去关爱一下他，Q号是{}（", qqNumber.to_string())[..]));
 
 		}
 
