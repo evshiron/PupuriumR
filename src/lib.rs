@@ -43,6 +43,7 @@ pub extern "stdcall" fn initialize(AuthCode: i32) -> i32 {
 
 	unsafe {
 
+		// Comment this or click quickly, or the applet will fail to launch as CQP has a time limit.
 		user32::MessageBoxA(std::ptr::null_mut(), gbk!("PupuriumR初始化完毕。"), gbk!("PupuriumR初始化完毕。"), 0);
 
 		AUTH_CODE = AuthCode;
@@ -54,7 +55,7 @@ pub extern "stdcall" fn initialize(AuthCode: i32) -> i32 {
 }
 
 #[export_name="\x01_PrivateMessageHandler"]
-pub extern "stdcall" fn private_message_handler(subType: i32, sendTime: i32, qqNumber: i64, msg: *const i8, font: i32) -> i32 {
+pub extern "stdcall" fn private_message_handler(subType: i32, sendTime: i32, qqNum: i64, msg: *const i8, font: i32) -> i32 {
 	
 	unsafe {
 
@@ -62,13 +63,13 @@ pub extern "stdcall" fn private_message_handler(subType: i32, sendTime: i32, qqN
 
 		cqpapi::CQ_addLog(AUTH_CODE, cqpapi::CQLOG_INFO, gbk!(msg), gbk!(msg));
 
-		cqpapi::CQ_sendPrivateMsg(AUTH_CODE, qqNumber, gbk!(&format!("你刚才说：{}", msg)[..]));
+		cqpapi::CQ_sendPrivateMsg(AUTH_CODE, qqNum, gbk!(&format!("你刚才说：{}", msg)[..]));
 
 		match msg {
 
 			"Alive?" => {
 
-				cqpapi::CQ_sendPrivateMsg(AUTH_CODE, qqNumber, gbk!("Alive."));
+				cqpapi::CQ_sendPrivateMsg(AUTH_CODE, qqNum, gbk!("Alive."));
 
 			},
 			_ => {
@@ -86,7 +87,7 @@ pub extern "stdcall" fn private_message_handler(subType: i32, sendTime: i32, qqN
 }
 
 #[export_name="\x01_GroupMessageHandler"]
-pub extern "stdcall" fn group_message_handler(subType: i32, sendTime: i32, groupNumber: i64, qqNumber: i64, anonymousName: *const i8, msg: *const i8, font: i32) -> i32 {
+pub extern "stdcall" fn group_message_handler(subType: i32, sendTime: i32, groupNum: i64, qqNum: i64, anonymousName: *const i8, msg: *const i8, font: i32) -> i32 {
 	
 	return cqpapi::EVENT_IGNORE;
 
