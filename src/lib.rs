@@ -1,17 +1,16 @@
 
-extern crate winapi;
-extern crate user32;
 extern crate encoding;
 
 extern crate cqpsdk;
-
-use std::ffi::CString;
-use std::ffi::CStr;
 
 use encoding::{Encoding, EncoderTrap, DecoderTrap};
 use encoding::all::{UTF_8, GBK};
 
 use cqpsdk::cqpapi;
+
+// Some macros for convenience.
+// Should have been integrated in evshiron/cqpsdk-rust.
+// But just leave here for easy reading.
 
 macro_rules! gbk {
 
@@ -39,49 +38,19 @@ pub extern "stdcall" fn app_info() -> *const i8 {
 #[export_name="\x01_Initialize"]
 pub extern "stdcall" fn initialize(AuthCode: i32) -> i32 {
 	
-	//println!("Initialize.");
-
 	unsafe {
-
-		// Comment this or click quickly, or the applet will fail to launch as CQP has a time limit.
-		user32::MessageBoxA(std::ptr::null_mut(), gbk!("PupuriumR初始化完毕。"), gbk!("PupuriumR初始化完毕。"), 0);
 
 		AUTH_CODE = AuthCode;
 
 	}
 
-	return 0;
+	return cqpapi::EVENT_IGNORE;
 
 }
 
 #[export_name="\x01_PrivateMessageHandler"]
 pub extern "stdcall" fn private_message_handler(subType: i32, sendTime: i32, qqNum: i64, msg: *const i8, font: i32) -> i32 {
 	
-	unsafe {
-
-		let msg = utf8!(msg);
-
-		cqpapi::CQ_addLog(AUTH_CODE, cqpapi::CQLOG_INFO, gbk!(msg), gbk!(msg));
-
-		cqpapi::CQ_sendPrivateMsg(AUTH_CODE, qqNum, gbk!(&format!("你刚才说：{}", msg)[..]));
-
-		match msg {
-
-			"Alive?" => {
-
-				cqpapi::CQ_sendPrivateMsg(AUTH_CODE, qqNum, gbk!("Alive."));
-
-			},
-			_ => {
-
-				return cqpapi::EVENT_IGNORE;
-
-			}
-
-		}
-
-	}
-
 	return cqpapi::EVENT_IGNORE;
 
 }

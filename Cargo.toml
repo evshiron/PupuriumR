@@ -2,13 +2,11 @@
 
 name = "pupurium_r"
 version = "0.1.0"
-authors = [ "evshiron", "Diberium" ]
+authors = [ "evshiron", "doylecnn" ]
 links = "CQP"
 build = "build.rs"
 
 [dependencies]
-winapi = "*"
-user32-sys = "*"
 encoding = "*"
 
 [dependencies.cqpsdk]
