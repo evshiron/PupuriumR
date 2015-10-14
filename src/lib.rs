@@ -28,11 +28,11 @@ static mut Pupurium: Pupurium = Pupurium {
 
 };
 
-fn welcomeResistance(groupNumber: i64, qqNumber: i64) {
+fn welcomeResistance(groupNum: i64, qqNum: i64) {
 	
 	unsafe {
 
-		cqpapi::CQ_sendGroupMsg(Pupurium.AuthCode, groupNumber, gbk!(&format!(r#"欢迎新人 [CQ:at,qq={}]！
+		cqpapi::CQ_sendGroupMsg(Pupurium.AuthCode, groupNum, gbk!(&format!(r#"欢迎新人 [CQ:at,qq={}]！
 建议玩家使用英文界面方便交流（不要吐槽英文界面哪里方便交流...）
 右上角 目录 -> 设备 -> 语言 -> English 即可
 请务必完成新手四项任务：
@@ -41,7 +41,7 @@ fn welcomeResistance(groupNumber: i64, qqNumber: i64) {
   3.完成游戏自带 Training （游戏主界面右上角 OPS -> Training 下的项目）
   4.阅读 ingress 新手指南: http://pan.baidu.com/s/1pJ4yUuB
   5.汉子请爆照, 妹子请爆两张！
-如果对这个游戏有任何疑问，ASK。"#, qqNumber.to_string())[..]));
+如果对这个游戏有任何疑问，ASK。"#, qqNum.to_string())[..]));
 
 	}
 
@@ -76,7 +76,7 @@ pub extern "stdcall" fn initialize(AuthCode: i32) -> i32 {
 }
 
 #[export_name="\x01_PrivateMessageHandler"]
-pub extern "stdcall" fn private_message_handler(subType: i32, sendTime: i32, qqNumber: i64, msg: *const i8, font: i32) -> i32 {
+pub extern "stdcall" fn private_message_handler(subType: i32, sendTime: i32, qqNum: i64, msg: *const i8, font: i32) -> i32 {
 	
 	unsafe {
 
@@ -88,7 +88,7 @@ pub extern "stdcall" fn private_message_handler(subType: i32, sendTime: i32, qqN
 
 			"Alive?" => {
 
-				cqpapi::CQ_sendPrivateMsg(Pupurium.AuthCode, qqNumber, gbk!("Alive."));
+				cqpapi::CQ_sendPrivateMsg(Pupurium.AuthCode, qqNum, gbk!("Alive."));
 
 			},
 			_ if(msg.starts_with("WelcomeResistance")) => {
@@ -97,7 +97,7 @@ pub extern "stdcall" fn private_message_handler(subType: i32, sendTime: i32, qqN
 
 				if(arguments.len() < 3) {
 
-					cqpapi::CQ_sendPrivateMsg(Pupurium.AuthCode, qqNumber, gbk!("INVALID_ARGUMENT"));
+					cqpapi::CQ_sendPrivateMsg(Pupurium.AuthCode, qqNum, gbk!("INVALID_ARGUMENT"));
 
 					return cqpapi::EVENT_IGNORE;
 
@@ -112,7 +112,7 @@ pub extern "stdcall" fn private_message_handler(subType: i32, sendTime: i32, qqN
 							Ok(v) => welcomeResistance(147798016, v),
 							Err(e) => {
 
-								cqpapi::CQ_sendPrivateMsg(Pupurium.AuthCode, qqNumber, gbk!("INVALID_ARGUMENT"));
+								cqpapi::CQ_sendPrivateMsg(Pupurium.AuthCode, qqNum, gbk!("INVALID_ARGUMENT"));
 
 								return cqpapi::EVENT_IGNORE
 
@@ -123,7 +123,7 @@ pub extern "stdcall" fn private_message_handler(subType: i32, sendTime: i32, qqN
 					},
 					_ => {
 
-						cqpapi::CQ_sendPrivateMsg(Pupurium.AuthCode, qqNumber, gbk!("INVALID_ARGUMENT"));
+						cqpapi::CQ_sendPrivateMsg(Pupurium.AuthCode, qqNum, gbk!("INVALID_ARGUMENT"));
 
 						return cqpapi::EVENT_IGNORE;
 
@@ -134,7 +134,7 @@ pub extern "stdcall" fn private_message_handler(subType: i32, sendTime: i32, qqN
 			},
 			_ => {
 
-				cqpapi::CQ_sendPrivateMsg(Pupurium.AuthCode, qqNumber, gbk!(&format!("你刚才说：{}", msg)[..]));
+				cqpapi::CQ_sendPrivateMsg(Pupurium.AuthCode, qqNum, gbk!(&format!("你刚才说：{}", msg)[..]));
 
 				return cqpapi::EVENT_IGNORE;
 
@@ -149,20 +149,20 @@ pub extern "stdcall" fn private_message_handler(subType: i32, sendTime: i32, qqN
 }
 
 #[export_name="\x01_GroupMessageHandler"]
-pub extern "stdcall" fn group_message_handler(subType: i32, sendTime: i32, groupNumber: i64, qqNumber: i64, anonymousName: *const i8, msg: *const i8, font: i32) -> i32 {
+pub extern "stdcall" fn group_message_handler(subType: i32, sendTime: i32, groupNum: i64, qqNum: i64, anonymousName: *const i8, msg: *const i8, font: i32) -> i32 {
 	
 	return cqpapi::EVENT_IGNORE;
 
 }
 
 #[export_name="\x01_GroupMemberLeaveHandler"]
-pub extern "stdcall" fn group_member_leave_handler(subType: i32, sendTime: i32, groupNumber: i64, opQQNumber: i64, qqNumber: i64) -> i32 {
+pub extern "stdcall" fn group_member_leave_handler(subType: i32, sendTime: i32, groupNum: i64, opQQNum: i64, qqNum: i64) -> i32 {
 
 	unsafe {
 
-		if(groupNumber == 147798016) {
+		if(groupNum == 147798016) {
 
-			cqpapi::CQ_sendGroupMsg(Pupurium.AuthCode, groupNumber, gbk!(&format!("又有人因为忍受不了这群的污退群了……快来个人去关爱一下他，Q号是{}（", qqNumber.to_string())[..]));
+			cqpapi::CQ_sendGroupMsg(Pupurium.AuthCode, groupNum, gbk!(&format!("又有人因为忍受不了这群的污退群了……快来个人去关爱一下他，Q号是{}（", qqNum.to_string())[..]));
 
 		}
 
@@ -173,13 +173,13 @@ pub extern "stdcall" fn group_member_leave_handler(subType: i32, sendTime: i32, 
 }
 
 #[export_name="\x01_GroupMemberJoinHandler"]
-pub extern "stdcall" fn group_member_join_handler(subType: i32, sendTime: i32, groupNumber: i64, opQQNumber: i64, qqNumber: i64) -> i32 {
+pub extern "stdcall" fn group_member_join_handler(subType: i32, sendTime: i32, groupNum: i64, opQQNum: i64, qqNum: i64) -> i32 {
 	
 	unsafe {
 
-		if(groupNumber == 147798016) {
+		if(groupNum == 147798016) {
 
-			welcomeResistance(groupNumber, qqNumber);
+			welcomeResistance(groupNum, qqNum);
 
 		}
 
