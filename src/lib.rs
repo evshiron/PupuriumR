@@ -121,6 +121,22 @@ pub extern "stdcall" fn private_message_handler(subType: i32, sendTime: i32, qqN
 						}
 
 					},
+					"WuhanNew" => {
+
+						match arguments[2].parse::<i64>() {
+
+							Ok(v) => welcomeResistance(273395915, v),
+							Err(e) => {
+
+								cqpapi::CQ_sendPrivateMsg(Pupurium.AuthCode, qqNum, gbk!("INVALID_ARGUMENT"));
+
+								return cqpapi::EVENT_IGNORE
+
+							}
+
+						}
+
+					},
 					_ => {
 
 						cqpapi::CQ_sendPrivateMsg(Pupurium.AuthCode, qqNum, gbk!("INVALID_ARGUMENT"));
@@ -175,13 +191,11 @@ pub extern "stdcall" fn group_member_leave_handler(subType: i32, sendTime: i32, 
 #[export_name="\x01_GroupMemberJoinHandler"]
 pub extern "stdcall" fn group_member_join_handler(subType: i32, sendTime: i32, groupNum: i64, opQQNum: i64, qqNum: i64) -> i32 {
 	
-	unsafe {
+	match(groupNum) {
 
-		if(groupNum == 147798016) {
-
-			welcomeResistance(groupNum, qqNum);
-
-		}
+		147798016 => welcomeResistance(groupNum, qqNum),
+		273395915 => welcomeResistance(groupNum, qqNum),
+		_ => {}
 
 	}
 
