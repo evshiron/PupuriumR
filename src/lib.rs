@@ -3,8 +3,10 @@ extern crate encoding;
 
 extern crate cqpsdk;
 
-use encoding::{Encoding, EncoderTrap, DecoderTrap};
-use encoding::all::{UTF_8, GBK};
+use std::ffi::{ CString, CStr };
+
+use encoding::{ Encoding, EncoderTrap, DecoderTrap };
+use encoding::all::{ UTF_8, GBK };
 
 use cqpsdk::cqpapi;
 
@@ -14,7 +16,7 @@ use cqpsdk::cqpapi;
 
 macro_rules! gbk {
 
-	( $x: expr ) => (CString::new(GBK.encode($x, EncoderTrap::Ignore).unwrap()).unwrap().as_ptr());
+	( $x: expr ) => (CString::new(GBK.encode($x, EncoderTrap::Ignore).unwrap()).unwrap().into_raw());
 	
 }
 
