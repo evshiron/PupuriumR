@@ -1,15 +1,12 @@
 
-extern crate winapi;
-extern crate user32;
 extern crate encoding;
 
 #[macro_use]
 extern crate cqpsdk;
 
-use std::ffi::CString;
-use std::ffi::CStr;
+use std::ffi::{ CString, CStr };
 
-use encoding::{Encoding, EncoderTrap, DecoderTrap};
+use encoding::{ Encoding, EncoderTrap, DecoderTrap };
 use encoding::all::{UTF_8, GBK};
 
 use cqpsdk::cqpapi;
@@ -39,7 +36,10 @@ fn welcomeResistance(groupNum: i64, qqNum: i64) {
   1.修改群名片（群名片格式：游戏等级-游戏id-活动区域）
   2.上传带 游戏ID 的游戏内截图（上传到群内新人报道相册）
   3.完成游戏自带 Training （游戏主界面右上角 OPS -> Training 下的项目）
-  4.阅读 ingress 新手指南: http://pan.baidu.com/s/1pJ4yUuB
+  4.阅读 ingress 新手指南（群共享里也有一些教学）
+    北蓝：http://t.cn/RqCGOfv
+    广蓝（要翻）：https://goo.gl/wLcYjV
+    杭蓝（可能要翻）：http://t.cn/RqWpKn5
   5.汉子请爆照, 妹子请爆两张！
 如果对这个游戏有任何疑问，ASK。"#, qqNum.to_string())[..]));
 

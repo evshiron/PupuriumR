@@ -7,8 +7,6 @@ links = "CQP"
 build = "build.rs"
 
 [dependencies]
-winapi = "*"
-user32-sys = "*"
 encoding = "*"
 
 [dependencies.cqpsdk]
